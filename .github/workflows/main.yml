@@ -1,0 +1,54 @@
+#
+# Workflow to validate Serenity OS builds after setup scripts
+#
+
+name: Validate
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  init:
+    strategy:
+      matrix:
+        platform:
+          - ubuntu-latest
+        include:
+          - platform: ubuntu-latest
+            launch: bash init.sh
+
+    env:
+      TARGET: x86_64
+
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.platform }}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Environment Setup
+        working-directory: ${{ github.workspace }}
+        run: ${{ matrix.launch }}
+
+      # Build Serenity OS toolchain
+      - name: Toolchain
+        working-directory: ${{ github.workspace }}/serenity/Toolchain
+        run: ARCH="$TARGET" ./BuildIt.sh
+
+      # Build Serenity OS default
+      - name: SerenityOS
+        working-directory: ${{ github.workspace }}/serenity
+        run: Meta/serenity.sh build "$TARGET"

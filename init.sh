@@ -2,7 +2,6 @@
 
 SERENITY_DEV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 SERENITY_SOURCE_DIR="$SERENITY_DEV_DIR/serenity"
-TARGET=x86_64
 
 echo "Serenity Development Root: '$SERENITY_DEV_DIR'"
 echo "Serenity Source: '$SERENITY_SOURCE_DIR'"
@@ -20,8 +19,6 @@ sudo npm install -g npm@7.20.5
 
 python3 -m pip install --upgrade pip
 pip3 install flake8 requests
-
-exit
 
 # Add the git commit hooks
 pre-commit install
@@ -46,11 +43,3 @@ sudo update-alternatives --set c++ /usr/bin/g++
 
 ln --force serenity/.prettierignore .prettierignore
 ln --force serenity/.prettierrc .prettierrc
-
-# This is technically superfluous since the build command below already builds the toolchain, but it
-# should be mostly a no-op the second time and this is good reference for how to build it manually
-# if needed.
-(cd "$SERENITY_SOURCE_DIR/Toolchain" && ARCH="$TARGET" ./BuildIt.sh)
-
-# Intentionally not doing a full 'rebuild-toolchain' as it is time consuming and not really necessary
-(cd "$SERENITY_SOURCE_DIR" && "Meta/serenity.sh" build "$TARGET")
