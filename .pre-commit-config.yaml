@@ -1,0 +1,13 @@
+repos:
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: Running shellcheck to ensure scripts pass linting
+        entry: shellcheck
+        pass_filenames: false
+        args:
+          - -f
+          - tty
+          - init.sh
+        stages: [ commit ]
+        language: system

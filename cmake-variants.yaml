@@ -1,0 +1,48 @@
+#
+# Serenity OS - CMake Variants
+#
+#   - https://github.com/joelvaneenwyk/serenity/blob/master/Documentation/AdvancedBuildInstructions.md
+#
+
+buildType:
+  default: default
+  description: test
+  choices:
+    default:
+      short: Default
+      long: This is the default build type and is optimized with debug info and asserts enabled.
+      buildType: None
+
+buildLagom:
+  default: 'no'
+  choices:
+    'yes':
+        short: Build Lagom
+        long: Builds Lagom, which makes various SerenityOS libraries and programs available on the host system.
+        setting:
+          BUILD_LAGOM: yes
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
+    'no':
+        short: No Lagom
+        long: Skips Lagom build which excludes tests that run on host system.
+        setting:
+          BUILD_LAGOM: no
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "1"
+
+sanitizer:
+  default: 'no'
+  choices:
+    'yes':
+        short: Enable Sanitizers
+        long: Builds in runtime checks for memory corruption bugs (like buffer overflows and memory leaks) in Lagom test cases and the kernel, respectively.
+        setting:
+          ENABLE_ADDRESS_SANITIZER: yes
+          ENABLE_KERNEL_ADDRESS_SANITIZER: yes
+    'no':
+        short: No Sanitizers
+        long: Skips runtime memory corruption checks at runtime.
+        setting:
+          ENABLE_ADDRESS_SANITIZER: no
+          ENABLE_KERNEL_ADDRESS_SANITIZER: no
